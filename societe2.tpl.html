@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>{{{=it.societeName }}} </title>
+</head>
+<body>
+	<div class="societes" itemscope="" itemtype="http://schema.org/FinancialService" data-ng-cloak>
+		<div class="row">
+			{{{? it.logo}}}
+			<div class="col-xs-12 col-md-3">
+				<a itemprop="sameAs" href="{{{=it.web}}}" rel="nofollow" target="_blank">
+					<img class="img-responsive img-thumbnail" itemprop="logo" src="{{{=it.logo}}}" alt="Logo {{{=it.societeName}}}">
+				</a>
+			</div>
+			{{{?}}}
+			<div class="col-xs-8">
+					<div class="pull-left rating rating-{{{=it.boostRating}}}" title="{{{=it.trans.ratingTitle(it.boostRating)}}}" itemprop="aggregateRating">
+						{{{=it.boostRating}}}
+					</div>
+					<h1>
+						<span itemprop="name">{{{=it.societeName }}}</span>
+					</h1>
+				{{{? it.web }}}
+					<a class="btn btn-link" href="{{{=it.web}}}"  rel="nofollow" target="_blank">{{{=it.web}}}</a>
+				{{{?}}}
+			</div>
+		</div>
+		{{{? it.company &&  it.company.description && it.company.description[it.trans.menu.lang]}}}
+			<h2>{{{=it.trans.pres.title}}}</h2>
+			<div>
+				{{{= it.company.description[it.trans.menu.lang] }}}
+			</div>
+		{{{?}}}
+		<div>
+			<h2>{{{=it.trans.funds.title}}}</h2>
+
+			<!-- Affichage en desktop et tablette -->
+			<table class="hidden-xs table table-striped table-condensed text-right">
+				<thead>
+					<tr>
+						<th></th>
+						<th></th>
+						<th>{{{=it.trans.tableTitle.isin}}}</th>
+						<th>{{{=it.trans.tableTitle.name}}}</th>
+						<th class='text-right'>{{{=it.trans.tableTitle.nav}}}</th>
+						<th class='text-right'>{{{=it.trans.tableTitle.mtd(it.datecurrent.monthcurrent, it.datecurrent.yearcurrent)}}}</th>
+						<th class='text-right'>{{{=it.trans.tableTitle.ytd(it.datecurrent.yearcurrent)}}}</th>
+						<th class='text-right'>{{{=it.trans.tableTitle._1y}}}</th>
+						<th class='text-right'>{{{=it.trans.tableTitle._3y}}}</th>
+						<th class='text-right'>{{{=it.trans.tableTitle._5y}}}</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{{~it.tableau :row}}}
+						<tr ng-controller="ShareRow" data-ng-cloak ng-init="init('{{{=row.id}}}', '{{{=it.helpers.jsEscapeQuotes(row.isin)}}}', '{{{=it.helpers.jsEscapeQuotes(row.name)}}}')" class="ng-cloak {{{=row.classname}}}">
+							<td>
+								<button class="btn btn-link btn-circled" ng-class="{ toggled: vm.selected }" ng-click="vm.selectionChanged()">
+									<span class="glyphicon glyphicon-sort rotate-icon" aria-hidden="true"></span>
+								</button>
+							</td>
+							<td>
+								<button class='btn btn-link' ng-click="showLists(vm.id)" title="Ajouter {{{=row.name}}} à vos favoris">
+									<i class="glyphicon glyphicon-star-empty"></i>
+								</button>
+							</td>
+							<td class='text-left'>
+								<a href="{{{=row.lientopart}}}" target="_self"> {{{=row.isin}}} </a>
+							</td>
+							<td class='text-left'>
+								<a href="{{{=row.lientopart}}}" target="_self"> {{{=row.name}}} </a>
+							</td>
+							<td>{{{=it.helpers.displayAmount(row.nav, '-')}}}</td>
+							<td>{{{=it.helpers.displayPerf(row.mtd)}}}</td>
+							<td>{{{=it.helpers.displayPerf(row.ytd)}}}</td>
+							<td>{{{=it.helpers.displayPerf(row._1y)}}}</td>
+							<td>{{{=it.helpers.displayPerf(row._3y)}}}</td>
+							<td>{{{=it.helpers.displayPerf(row._5y)}}}</td>
+						</tr>
+					{{{~}}}
+				</tbody>
+			</table>
+
+			<!-- Affichage en mobile -->
+			<ul class="visible-xs list-unstyled list-striped">
+				{{{~it.tableau :row:index}}}
+				<li ng-controller="ShareRow" ng-init="init('{{{=row.id}}}', '{{{=it.helpers.jsEscapeQuotes(row.isin)}}}', '{{{=it.helpers.jsEscapeQuotes(row.name)}}}', '{{{=row.fundId}}}', {{{=row.hasOtherShares}}}, '{{{=it.trans.menu.lang}}}')">
+					<div>
+						<button class="btn btn-link btn-circled" ng-class="{ toggled: vm.selected }" ng-click="vm.selectionChanged()">
+							<span class="glyphicon glyphicon-sort rotate-icon" aria-hidden="true"></span>
+						</button>
+						<button class='btn btn-link btn-circled' ng-class="{ toggled: vm.otherSharesVisible }" ng-show="vm.hasOtherShares" ng-click="vm.toggleOtherShares()" title="Afficher les autres Parts">
+							<i class="glyphicon glyphicon-list"></i>
+						</button>
+						<button class='btn btn-link' ng-click="showLists(vm.id)" title="Ajouter {{{=row.name}}} à vos favoris">
+							<i class="glyphicon glyphicon-star-empty"></i>
+						</button>
+							<a href="{{{=row.lientopart}}}" target="_self"> {{{=row.isin}}} </a>
+							<a href="{{{=row.lientopart}}}" target="_self"> {{{=row.name}}} </a>
+					</div>
+
+					<table class='table table-condensed text-right table-result-xs'>
+						{{{? index % 5 == 0 }}}
+						<thead>
+							<tr>
+								<th class='text-right'>{{{=it.trans.tableTitle.nav}}}</th>
+								<th class='text-right'>{{{=it.trans.tableTitle.mtd(it.datecurrent.monthcurrent, it.datecurrent.yearcurrent)}}}</th>
+								<th class='text-right'>{{{=it.trans.tableTitle.ytd(it.datecurrent.yearcurrent)}}}</th>
+								<th class='text-right'>{{{=it.trans.tableTitle._1y}}}</th>
+								<th class='text-right'>{{{=it.trans.tableTitle._3y}}}</th>
+								<th class='text-right'>{{{=it.trans.tableTitle._5y}}}</th>
+							</tr>
+						</thead>
+						{{{?}}}
+						<tbody>
+							<td>{{{=it.helpers.displayAmount(row.nav, '-')}}}</td>
+							<td>{{{=it.helpers.displayPerf(row.mtd)}}}</td>
+							<td>{{{=it.helpers.displayPerf(row.ytd)}}}</td>
+							<td>{{{=it.helpers.displayPerf(row._1y)}}}</td>
+							<td>{{{=it.helpers.displayPerf(row._3y)}}}</td>
+							<td>{{{=it.helpers.displayPerf(row._5y)}}}</td>
+						</tbody>
+					</table>
+
+					<div ng-show="vm.otherSharesVisible" ng-repeat="part in vm.other_shares">
+						<div>
+							<button class="btn btn-link btn-circled" ng-class="{ toggled: part.selected }" ng-click="part.selectionChanged()">
+								<span class="glyphicon glyphicon-sort rotate-icon" aria-hidden="true"></span>
+							</button>
+							<button class='btn btn-link' ng-click="showLists(part.id)" title="Ajouter {{part.name}} à vos favoris">
+								<i class="glyphicon glyphicon-star-empty"></i>
+							</button>
+							<a srv-href='{{part.url}}'> {{part.isin}} </a>
+							<a srv-href='{{part.url}}'> {{part.name}} </a>
+						</div>
+						<table class='table table-condensed text-right table-result-xs'>
+							<tr>
+								<td>{{ part.navs.last | amountField }}</td>
+								<td></td>
+								<td>{{ (100 * part.fields[currentYear]) | number:1 }}</td>
+								<td>{{ (100 * part.fields['1001']) | number:1 }}</td>
+								<td>{{ (100 * part.fields['1003']) | number:1 }}</td>
+								<td>{{ (100 * part.fields['1005']) | number:1 }}</td>
+							</tr>
+						</table>
+					</div>
+				</li>
+				{{{~}}}
+			</ul>
+
+			<ul class="list-inline">
+				{{{? it.page > 1}}}
+				<li>
+					<a href="{{{=it.url}}}{{{?it.page > 2}}}?page={{{=it.page - 1}}}{{{?}}}" rel="prev" target="_self" class="btn btn-primary" title="{{{=it.trans.previousPage}}}">{{{=it.trans.previousPage}}}</a>
+				</li>
+				{{{?}}}
+
+				{{{? it.hasMore }}}
+				<li>
+					<a href="{{{=it.url}}}?page={{{=it.page + 1}}}" rel="next" target="_self" class="btn btn-primary" title="{{{=it.trans.nextPage}}}">{{{=it.trans.nextPage}}}</a>
+				</li>
+				{{{?}}}
+			</ul>
+
+		</div>
+	</div>
+</body>
+</html>
